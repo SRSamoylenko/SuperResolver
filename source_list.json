@@ -1,0 +1,55 @@
+[
+    {
+        "source_type": "point",
+        "coordinates": [],
+        "mean_photons": null,
+        "statistics": "exponential",
+        "field_shape": null
+    },
+    {
+        "source_type": "circular",
+        "coordinates": [],
+        "mean_photons": null,
+        "statistics": "exponential",
+        "field_shape": null,
+        "radiation_type": "uniform",
+        "radius": null
+    },
+    {
+        "source_type": "rectangular",
+        "coordinates": [],
+        "mean_photons": null,
+        "statistics": "exponential",
+        "field_shape": null,
+        "radiation_type": "uniform",
+        "lengths": null
+    },
+    {
+        "source_type": "triangular",
+        "coordinates": [],
+        "mean_photons": null,
+        "statistics": "exponential",
+        "field_shape": null,
+        "radiation_type": "uniform"
+    },
+    {
+        "source_type": "rotational",
+        "coordinates": [],
+        "mean_photons": null,
+        "statistics": "exponential",
+        "field_shape": null,
+        "radiation_type": "uniform",
+        "radiuses": null
+    },
+    {
+        "source_type": "polygonal",
+        "coordinates": [],
+        "mean_photons": null,
+        "statistics": "exponential",
+        "field_shape": null,
+        "radiation_type": "uniform",
+        "scale": null,
+        "rotation": null,
+        "n_vertex": null
+    }
+]

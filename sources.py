@@ -1,34 +1,30 @@
 import numpy as np
-from util import Statistics, Coordinate, cartesian_to_polar, zero_division, SourceType, RadiationType
+from util import Coordinate, cartesian_to_polar, zero_division
 
 
 class PointSource:
-    def __init__(self, coordinates=None, mean_photons=None, statistics=Statistics.EXPONENTIAL, field_shape=None):
-        if coordinates is None:
-            coordinates = np.random.random_sample(2)
-        self.coordinates = coordinates
+    Statistics = {
+        'exponential': np.random.exponential,
+        'poisson': np.random.poisson
+    }
 
-        if mean_photons is None:
-            mean_photons = np.random.random_sample() * 5
-
+    def __init__(self, coordinates=[], mean_photons=None, statistics='exponential', field_shape=None):
+        self.coordinates = np.array(coordinates) if np.array(coordinates).size != 0 else np.random.random_sample(2)
+        self.mean_photons = mean_photons if mean_photons else np.random.random_sample() * 5
         self.radiation_shape = None
-        if field_shape is not None:
+        self.field_shape = field_shape
+        if field_shape:
             self.define_radiation_shape(field_shape)
-
-        self.mean_photons = mean_photons
         self.statistics = statistics
+        self.size = None
 
     def radiate(self):
         if self.radiation_shape is None:
             raise Exception("Radiation shape hasn't been defined.")
-        n_photons = self.get_photon_number()
-        return n_photons * self.radiation_shape
+        return self.get_photon_number() * self.radiation_shape
 
     def get_photon_number(self):
-        if self.statistics == Statistics.POISSON:
-            return np.random.poisson(lam=self.mean_photons)
-        elif self.statistics == Statistics.EXPONENTIAL:
-            return np.random.exponential(scale=self.mean_photons)
+        return self.Statistics[self.statistics](self.mean_photons, size=self.size)
 
     def define_radiation_shape(self, field_shape):
         res = np.zeros(field_shape).T
@@ -38,28 +34,20 @@ class PointSource:
 
 
 class PlanarSource(PointSource):
-    def __init__(self, radiation_type=RadiationType.UNIFORM, **kwargs):
+    RadiationType = {
+        'uniform': True,
+        'non-uniform': False
+    }
+
+    def __init__(self, radiation_type='uniform', **kwargs):
         self.radiation_type = radiation_type
-
+        self.size = None if self.RadiationType[self.radiation_type] else self.field_shape
         PointSource.__init__(self, **kwargs)
-
-    def get_photon_number(self):
-        size = None
-        if self.radiation_type == RadiationType.NON_UNIFORM:
-            size = self.radiation_shape.shape
-
-        if self.statistics == Statistics.POISSON:
-            return np.random.poisson(lam=self.mean_photons, size=size)
-        elif self.statistics == Statistics.EXPONENTIAL:
-            return np.random.exponential(scale=self.mean_photons, size=size)
 
 
 class CircularSource(PlanarSource):
     def __init__(self, radius=None, **kwargs):
-        if radius is None:
-            radius = np.random.random_sample() / 4
-        self.radius = radius
-
+        self.radius = radius if radius else np.random.random_sample() / 4
         PlanarSource.__init__(self, **kwargs)
 
     def define_radiation_shape(self, field_shape):
@@ -71,9 +59,7 @@ class CircularSource(PlanarSource):
 
 class RectangularSource(PlanarSource):
     def __init__(self, lengths=None, **kwargs):
-        if lengths is None:
-            lengths = np.random.random_sample(2)
-            self.lengths = lengths
+        self.lengths = lengths if lengths else np.random.random_sample(2)
         PlanarSource.__init__(self, **kwargs)
 
     def define_radiation_shape(self, field_shape):
@@ -89,9 +75,8 @@ class RectangularSource(PlanarSource):
 
 
 class TriangularSource(PlanarSource):
-    def __init__(self, coordinates=None, **kwargs):
-        if coordinates is None:
-            coordinates = np.random.random_sample((3, 2))
+    def __init__(self, coordinates=[], **kwargs):
+        coordinates = np.array(coordinates) if np.array(coordinates).size != 0 else np.random.random_sample((3, 2))
         PlanarSource.__init__(self, coordinates=coordinates, **kwargs)
 
     def define_radiation_shape(self, field_shape):
@@ -106,7 +91,7 @@ class TriangularSource(PlanarSource):
 
 class RotationalFigureSource(PlanarSource):
     def __init__(self, radiuses=None, **kwargs):
-        if radiuses is None:
+        if not radiuses:
             radiuses = np.array([])
             for i in np.arange(int(np.floor(np.random.random_sample() * 10))):
                 if i == 0:
@@ -131,17 +116,9 @@ class RotationalFigureSource(PlanarSource):
 
 class PolygonalSource(PlanarSource):
     def __init__(self, scale=None, rotation=None, n_vertex=None, **kwargs):
-        if n_vertex is None:
-            n_vertex = 3 + np.floor(np.random.random_sample() * 8) / 2
-        self.n_vertex = n_vertex
-
-        if scale is None:
-            scale = 0.05 + np.random.random_sample() / 20
-        self.scale = scale
-
-        if rotation is None:
-            rotation = np.random.random_sample() * 360
-        self.rotation = np.deg2rad(rotation)
+        self.n_vertex = n_vertex if n_vertex else 3 + np.floor(np.random.random_sample() * 8) / 2
+        self.scale = scale if scale else 0.05 + np.random.random_sample() / 20
+        self.rotation = np.deg2rad(rotation) if rotation else np.deg2rad(np.random.random_sample() * 360)
         PlanarSource.__init__(self, **kwargs)
 
     def define_radiation_shape(self, field_shape):
@@ -168,44 +145,25 @@ class PolygonalSource(PlanarSource):
 
 
 class SourcePlane:
+    Source = {
+        'point': PointSource,
+        'circular': CircularSource,
+        'rectangular': RectangularSource,
+        'triangular': TriangularSource,
+        'rotational': RotationalFigureSource,
+        'polygonal': PolygonalSource
+    }
+
+    SourceTypeSelector = ('point', 'circular', 'rectangular', 'triangular', 'rotational', 'polygonal')
+
     def __init__(self, shape, sources=np.array(list())):
         self.shape = shape
         self.sources = sources
 
-    def add_point_source(self, **kwargs):
-        self.sources = np.append(self.sources, [PointSource(field_shape=self.shape, **kwargs)])
-
-    def add_circular_source(self, **kwargs):
-        self.sources = np.append(self.sources, [CircularSource(field_shape=self.shape, **kwargs)])
-
-    def add_rectangular_source(self, **kwargs):
-        self.sources = np.append(self.sources, [RectangularSource(field_shape=self.shape, **kwargs)])
-
-    def add_triangular_source(self, **kwargs):
-        self.sources = np.append(self.sources, [TriangularSource(field_shape=self.shape, **kwargs)])
-
-    def add_rotational_figure_source(self, **kwargs):
-        self.sources = np.append(self.sources, [RotationalFigureSource(field_shape=self.shape, **kwargs)])
-
-    def add_polygonal_source(self, **kwargs):
-        self.sources = np.append(self.sources, [PolygonalSource(field_shape=self.shape, **kwargs)])
-
     def add_source(self, source_type=None, **kwargs):
-        if source_type is None:
-            source_type = np.random.randint(0, 6)
-
-        if source_type == SourceType.POINT:
-            self.add_point_source(**kwargs)
-        elif source_type == SourceType.CIRCULAR:
-            self.add_circular_source(**kwargs)
-        elif source_type == SourceType.RECTANGULAR:
-            self.add_rectangular_source(**kwargs)
-        elif source_type == SourceType.TRIANGULAR:
-            self.add_triangular_source(**kwargs)
-        elif source_type == SourceType.ROTATIONAL:
-            self.add_rotational_figure_source(**kwargs)
-        elif source_type == SourceType.POLYGONAL:
-            self.add_polygonal_source(**kwargs)
+        if not source_type:
+            source_type = self.SourceTypeSelector[np.random.randint(0, 6)]
+        self.sources = np.append(self.sources, [self.Source[source_type](field_shape=self.shape, **kwargs)])
 
     def show_sources_positions(self):
         res = np.zeros(self.shape).T

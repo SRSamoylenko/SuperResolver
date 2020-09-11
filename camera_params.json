@@ -1,0 +1,8 @@
+{
+    "timeout": "1s",
+    "copy": true,
+    "n_frames": 1,
+    "vbin": 1,
+    "hbin": 1,
+    "exposure_time": "100ms"
+}

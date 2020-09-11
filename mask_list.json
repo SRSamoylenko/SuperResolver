@@ -1,0 +1,36 @@
+[
+    {
+        "center_coordinates": null,
+        "grating_period": [
+            100,
+            0
+        ],
+        "amplitude_modulation": true,
+        "amplitude_subtraction": true,
+        "beam_width": null,
+        "mode_params": {
+            "mode_type": "hermite",
+            "order": [
+                1,
+                1
+            ]
+        }
+    },
+    {
+        "center_coordinates": null,
+        "grating_period": [
+            100,
+            0
+        ],
+        "amplitude_modulation": true,
+        "amplitude_subtraction": true,
+        "beam_width": null,
+        "mode_params": {
+            "mode_type": "laguerre",
+            "order": [
+                1,
+                1
+            ]
+        }
+    }
+]

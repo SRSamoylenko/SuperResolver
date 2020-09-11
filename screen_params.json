@@ -1,0 +1,9 @@
+{
+    "partition": [
+        1,
+        1
+    ],
+    "sources_gain": 1,
+    "grey_levels": 256,
+    "mask_levels": null
+}
