@@ -83,20 +83,3 @@ if __name__ == '__main__':
             cv2.imwrite(image_name, image)
         print('\n')
     print('Measurement has been successfully finished.\n')
-
-    #
-    # camera = instrument(camera_serial)
-    # screen = Screen(**screen_params)
-    #
-    # for source in sources_list:
-    #     screen.source_plane.add_source(**source)
-    #
-    # while screen.update_mask():
-    #     for i in range(captures_per_mask):
-    #         cv2.
-    #             screen.update_screen()
-    #         tmp_img = camera.grab_image(**camera_params)
-    #
-    # camera.close()
-    # os.mkdir(date)
-    # os.chdir(date)
