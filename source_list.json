@@ -3,15 +3,13 @@
         "source_type": "point",
         "coordinates": [],
         "mean_photons": null,
-        "statistics": "exponential",
-        "field_shape": null
+        "statistics": "exponential"
     },
     {
         "source_type": "circular",
         "coordinates": [],
         "mean_photons": null,
         "statistics": "exponential",
-        "field_shape": null,
         "radiation_type": "uniform",
         "radius": null
     },
@@ -20,7 +18,6 @@
         "coordinates": [],
         "mean_photons": null,
         "statistics": "exponential",
-        "field_shape": null,
         "radiation_type": "uniform",
         "lengths": null
     },
@@ -29,7 +26,6 @@
         "coordinates": [],
         "mean_photons": null,
         "statistics": "exponential",
-        "field_shape": null,
         "radiation_type": "uniform"
     },
     {
@@ -37,7 +33,6 @@
         "coordinates": [],
         "mean_photons": null,
         "statistics": "exponential",
-        "field_shape": null,
         "radiation_type": "uniform",
         "radiuses": null
     },
@@ -46,7 +41,6 @@
         "coordinates": [],
         "mean_photons": null,
         "statistics": "exponential",
-        "field_shape": null,
         "radiation_type": "uniform",
         "scale": null,
         "rotation": null,

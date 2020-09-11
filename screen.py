@@ -16,7 +16,7 @@ class Screen:
         self.source_plane = SourcePlane(shape=self.source_plane_shape)
         if source_list:
             for source in tqdm(source_list):
-                self.source_plane.add_source(source)
+                self.source_plane.add_source(**source)
             print("Sources have been successfully added.\n")
         self.sources_gain = sources_gain
         self.mask_shape = (resolution[Coordinate.X] - self.source_plane_shape[Coordinate.X],

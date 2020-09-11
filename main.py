@@ -12,7 +12,7 @@ if __name__ == '__main__':
     print('Captures per mask: ')
     captures_per_mask = int(input())
     date = datetime.today().strftime('%Y-%m-%d %H.%M.%S')
-    slm_description = screeninfo.getmonitors()[1]
+    slm_description = screeninfo.get_monitors()[1]
     print('Second monitor has been found.\n')
 
     with open('camera_params.json', 'r') as f:
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     with open('screen_params.json', 'w') as f:
         json.dump(screen_params, f, indent=4)
 
-    with open('source_list.json', 'r') as f:
+    with open('source_list.json', 'w') as f:
         json.dump(source_list, f, indent=4)
 
     screen = Screen(resolution=(slm_description.width, slm_description.height), source_list=source_list,
@@ -80,7 +80,7 @@ if __name__ == '__main__':
                          + screen.mask_list[screen.current_mask_number - 1]['mode_params']['mode_type'] \
                          + '_' + str(screen.mask_list[screen.current_mask_number - 1]['mode_params']['order']) \
                          + '_' + str(i+1) + '.bmp'
-            cv2.imwrite(image, image_name)
+            cv2.imwrite(image_name, image)
         print('\n')
     print('Measurement has been successfully finished.\n')
 
